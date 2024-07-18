@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Category List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+          integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
+            integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous">
+    </script>
+</head>
+
+<body>
+<main class="container">
+    <section class="row">
+        <div class="col-8 offset-2 mt-5">
+            <div class="card">
+                <div class="card-header text-center" style="background-color: aquamarine;">
+                    <h3>Category List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <div th:if="${message != null}" class="alert alert-primary" role="alert">
+                            <i>[[${message}]]</i>
+                        </div>
+                        <div class="row mt-2 mb-2">
+                            <div class="col">
+                                <form th:action="@{/admin/categories/search}" method="get" class="form-inline float-left">
+                                    <label for="name" class="form-label">Name:</label>
+                                    <input type="text" class="form-control ml-2" name="name" id="name"
+                                           placeholder="Name" />
+                                    <button class="btn btn-outline-success ml-2">Search</button>
+                                </form>
+                            </div>
+                            <div class="col text-right">
+                                <a class="btn btn-outline-info" th:href="@{/admin/categories/add}">Add new category</a>
+                            </div>
+                        </div>
+                        <div class="row" th:if="${!categoryPage.hasContent()}">
+                            <div class="col">
+                                <div class="alert alert-warning" role="alert">
+                                    <strong>No category found!</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered text-center" th:if="${categoryPage.hasContent()}">
+                            <thead>
+                            <tr>
+                                <th scope="col">Category ID</th>
+                                <th scope="col">Category Name</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="category : ${categoryPage.content}">
+                                <td scope="row">[[${category.categoryId}]]</td>
+                                <td th:text="${category.name}"></td>
+                                <td>
+                                    <a th:href="@{'/admin/categories/view/' + ${category.categoryId}}"
+                                       class="btn btn-outline-secondary" aria-label="View">
+                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    </a>
+                                    <a th:href="@{'/admin/categories/edit/' + ${category.categoryId}}"
+                                       class="btn btn-outline-success" aria-label="Edit">
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </a>
+                                    <a th:href="@{'/admin/categories/delete/' + ${category.categoryId}}"
+                                       class="btn btn-outline-danger" aria-label="Delete">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <form action="">
+                        <div class="form-inline float-left">
+                            <label for="size">Page size:</label>
+                            <select name="size" id="size" class="form-control"
+                            onchange="this.form.submit()">
+                            <option th:selected="${categoryPage.size == 5}" value="5">5</option>
+                            <option th:selected="${categoryPage.size == 10}" value="10">10</option>
+                            <option th:selected="${categoryPage.size == 15}" value="15">15</option>
+                            <option th:selected="${categoryPage.size == 20}" value="20">20</option>
+                            <option th:selected="${categoryPage.size == 30}" value="30">30</option>
+                        </select>
+                        </div>
+                    </form>
+                    <nav aria-label="Page navigation" th:if="${categoryPage.totalPages > 0}">
+                        <ul class="pagination justify-content-center">
+                            <li th:classappend="${categoryPage.number == 0} ? 'disabled'" class="page-item">
+                                <a th:href="@{/admin/categories/searchpaginated(name=${name}, size=${categoryPage.size}, page=${categoryPage.number})}"
+                                   class="page-link" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item" th:each="pageNumber : ${pageNumbers}" th:classappend="${pageNumber == categoryPage.number + 1} ? ' active'">
+                                <a th:href="@{/admin/categories/searchpaginated(name=${name}, size=${categoryPage.size}, page=${pageNumber})}"
+                                   class="page-link" th:text="${pageNumber}"></a>
+                            </li>
+                            <li th:classappend="${categoryPage.number + 1 == categoryPage.totalPages} ? 'disabled'" class="page-item">
+                                <a th:href="@{/admin/categories/searchpaginated(name=${name}, size=${categoryPage.size}, page=${categoryPage.number + 2})}"
+                                   class="page-link" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="row text-center mt-3">
+        <div class="col">
+            <p>&copy; 2024 Your Company</p>
+        </div>
+    </footer>
+</main>
+</body>
+
+</html>

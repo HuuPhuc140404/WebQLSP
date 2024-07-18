@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/dashboardLayout.html}">
+
+<head>
+</head>
+
+<body>
+<section class="row" layout:fragment="content">
+    <div class="col  mt-5">
+        <form th:action="@{/admin/accounts/saveOrUpdate}" method="post">
+            <div class="card">
+                <div class="card-header text-center" style="background-color: aquamarine;">
+                    <h3>List Account User</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <div th:if="${message != null}" class="alert alert-info" role="alert">
+                            <i th:text="${message}">[Message]</i>
+                        </div>
+                        <div>
+                            <a th:href="@{/admin/accounts/add}" class="btn btn-sm btn-outline-info m-2 float-right">Add New Account</a>
+                        </div>
+                        <table class="table table-bordered text-center">
+                            <thead>
+                            <tr>
+                                <th scope="col">Username</th>
+                                <th scope="col">Password</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="account : ${accounts}">
+                                <td th:text="${account.username}">[Username]</td>
+                                <td>••••••••</td>
+                                <td>
+                                    <a th:href="@{'/admin/accounts/view/' + ${account.username}}" class="btn btn-outline-secondary">
+                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    </a>
+                                    <a th:href="@{'/admin/accounts/edit/' + ${account.username}}" class="btn btn-outline-success">
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </a>
+                                    <a th:href="@{'/admin/accounts/delete/' + ${account.username}}" class="btn btn-outline-info">
+                                        <i class="fa fa-recycle" aria-hidden="true"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger"
+                                            th:data-id="${account.username}" th:data-name="${account.username}"
+                                            onclick="showConfirmModalDialog(this.getAttribute('data-id'), this.getAttribute('data-name'))">
+                                        <i class="fa fa-trash-alt" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <script>
+                            function showConfirmModalDialog(id, name) {
+                                document.getElementById('accountName').textContent = name;
+                                document.getElementById('yesOption').href = '/admin/accounts/delete/' + id;
+                                $('#confirmationModal').modal('show');
+                            }
+                        </script>
+                        <!-- Modal -->
+                        <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle"
+                             aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Confirmation</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Do you want to delete "<span id="accountName"></span>"?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a id="yesOption" class="btn btn-outline-danger">Yes</a>
+                                        <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>
